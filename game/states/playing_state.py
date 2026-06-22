@@ -9,7 +9,7 @@ from game.systems.obstacle_spawner import ObstacleSpawner
 class PlayingState:
     def  __init__(self, input_manager: InputManager) -> None:
         self.input_manager = input_manager
-        self.player = Player(1, (255, 255, 255))
+        self.player = Player(1)
         self.obstacles = pygame.sprite.Group()
         self.spawner = ObstacleSpawner(self.obstacles)
         self.collisions = CollisionSystem(self.player, self.obstacles, self._on_collision)

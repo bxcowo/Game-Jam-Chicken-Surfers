@@ -3,15 +3,24 @@ import math
 from pygame.locals import K_RIGHT, K_LEFT, K_UP, K_DOWN
 from game.utils.isometric_handler import screen_to_iso_x, screen_to_iso_y
 from game.systems.observer import Observer
-from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, ROLL_DURATION_MS, PLAYER_ROW
+from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, PLAYER_ANIMATION_SPEED, ROLL_DURATION_MS, PLAYER_ROW
 from game.utils.enums import HeightBand, PlayerState
+from game.systems.spritesheet_handler import SpriteSheet
 
 
 class Player(pygame.sprite.Sprite, Observer):
-    def __init__(self, gx, col) -> None:
+    def __init__(self, gx) -> None:
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(col)
+        self.spread_sheet = SpriteSheet(
+            "assets/chicken_sprites/ChickenWalking.png",
+            num_frames=4,
+            width=20,
+            height=21
+        )
+        self.images = self.spread_sheet.get_frames()
+        self.image_index = 0
+        self.image_counter = 0
+        self.image = self.images[self.image_index]
         self.rect = self.image.get_rect()
 
         self.gx = gx
@@ -46,6 +55,17 @@ class Player(pygame.sprite.Sprite, Observer):
             self.state_timer += dt
             if self.state_timer >= ROLL_DURATION_MS:
                 self.state = PlayerState.RUNNING
+
+        self.image_counter += 1
+
+        if self.image_counter >= PLAYER_ANIMATION_SPEED and self.image_index < len(self.images) - 1:
+            self.image_counter = 0
+            self.image_index += 1
+            self.image = self.images[self.image_index]
+
+        if self.image_index >= len(self.images) - 1 and self.image_counter >= PLAYER_ANIMATION_SPEED:
+            self.image_index = 0
+            self.image = self.images[self.image_index]
 
         target_x = screen_to_iso_x(self.gx, PLAYER_ROW)
         self.visual_x += (target_x - self.visual_x) * min(LANE_SWAP_SPEED * dt / 1000, 1)
