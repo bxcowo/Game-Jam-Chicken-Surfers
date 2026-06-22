@@ -4,6 +4,7 @@ from game.states.lose_state import LoseState
 from game.states.playing_state import PlayingState
 from game.systems.input_manager import InputManager
 from game.utils.isometric_handler import draw_tile_iso
+from game.utils import resources
 
 
 class Game:
@@ -11,6 +12,7 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Subway Chicken')
+        resources.load()
         self.clock = pygame.time.Clock()
         self.fps = FPS
 

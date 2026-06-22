@@ -5,29 +5,24 @@ from game.utils.isometric_handler import screen_to_iso_x, screen_to_iso_y
 from game.systems.observer import Observer
 from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, PLAYER_ANIMATION_SPEED, ROLL_DURATION_MS, PLAYER_ROW
 from game.utils.enums import HeightBand, PlayerState
-from game.systems.spritesheet_handler import SpriteSheet
+from game.utils import resources
 
 
 class Player(pygame.sprite.Sprite, Observer):
     def __init__(self, gx) -> None:
         pygame.sprite.Sprite.__init__(self)
-        self.spread_sheet = SpriteSheet(
-            "assets/chicken_sprites/ChickenWalking.png",
-            num_frames=4,
-            width=20,
-            height=21
-        )
-        self.images = self.spread_sheet.get_frames()
-        self.image_index = 0
-        self.image_counter = 0
-        self.image = self.images[self.image_index]
-        self.rect = self.image.get_rect()
 
         self.gx = gx
         self.z = 0
         self.visual_x = screen_to_iso_x(self.gx, PLAYER_ROW)
         self.state = PlayerState.RUNNING
         self.state_timer = 0
+
+        self.images = resources.get(self.state)
+        self.image_index = 0
+        self.image_counter = 0
+        self.image = self.images[self.image_index]
+        self.rect = self.image.get_rect()
 
         self._sync_rect()
 
@@ -39,9 +34,9 @@ class Player(pygame.sprite.Sprite, Observer):
         elif event.key == K_LEFT and self.gx > 0:
             self.gx -= 1
         elif event.key == K_UP and self.state == PlayerState.RUNNING:
-            self.state, self.state_timer = PlayerState.JUMPING, 0
+            self._set_state(PlayerState.JUMPING)
         elif event.key == K_DOWN and self.state == PlayerState.RUNNING:
-            self.state, self.state_timer = PlayerState.ROLLING, 0
+            self._set_state(PlayerState.ROLLING)
         self._sync_rect()
 
     def update(self, dt: int) -> None:
@@ -50,21 +45,18 @@ class Player(pygame.sprite.Sprite, Observer):
             progress = min(self.state_timer / JUMP_DURATION_MS, 1.0)
             self.z = JUMP_VISUAL_LIFT * math.sin(progress * math.pi)
             if progress >= 1.0:
-                self.state, self.z = PlayerState.RUNNING, 0
+                self.z = 0
+                self._set_state(PlayerState.RUNNING)
         elif self.state == PlayerState.ROLLING:
             self.state_timer += dt
             if self.state_timer >= ROLL_DURATION_MS:
-                self.state = PlayerState.RUNNING
+                self._set_state(PlayerState.RUNNING)
 
         self.image_counter += 1
 
-        if self.image_counter >= PLAYER_ANIMATION_SPEED and self.image_index < len(self.images) - 1:
+        if self.image_counter >= PLAYER_ANIMATION_SPEED:
             self.image_counter = 0
-            self.image_index += 1
-            self.image = self.images[self.image_index]
-
-        if self.image_index >= len(self.images) - 1 and self.image_counter >= PLAYER_ANIMATION_SPEED:
-            self.image_index = 0
+            self.image_index = (self.image_index + 1) % len(self.images)
             self.image = self.images[self.image_index]
 
         target_x = screen_to_iso_x(self.gx, PLAYER_ROW)
@@ -74,6 +66,16 @@ class Player(pygame.sprite.Sprite, Observer):
     def _sync_rect(self) -> None:
         screen_y = screen_to_iso_y(self.gx, PLAYER_ROW)
         self.rect.center = (int(self.visual_x), int(screen_y - self.z))
+
+    def _set_state(self, new_state: PlayerState) -> None:
+        if self.state == new_state:
+            return
+        self.state = new_state
+        self.state_timer = 0
+        self.image_index = 0
+        self.image_counter = 0
+        self.images = resources.get(new_state)
+        self.image = self.images[self.image_index]
 
     def is_vulnerable_to(self, height_band: HeightBand) -> bool:
         if self.state == PlayerState.JUMPING:
