@@ -2,12 +2,13 @@ import random
 import pygame
 from game.entities.obstacle import Obstacle
 from game.utils.enums import HeightBand
-from game.settings import GRID_SIZE_WIDTH, SPAWN_ROW
+from game.settings import GRID_SIZE_WIDTH, GRID_SIZE_HEIGHT, SPAWN_ROW
 
 class ObstacleSpawner:
     def __init__(self, obstacle_group: pygame.sprite.Group) -> None:
         self.group = obstacle_group
         self.elapsed_ms = 0
+        self.next_gap = 0
 
     def update(self, dt: int) -> None:
         self.elapsed_ms += dt
@@ -18,7 +19,8 @@ class ObstacleSpawner:
                 obstacle.kill()
 
         nearest = self._nearest_obstacle_row()
-        if nearest is None or nearest >= 1:
+        if nearest is None or nearest >= self.next_gap:
+            self.next_gap = random.randint(2, GRID_SIZE_HEIGHT // 2 - 1)
             self._spawn_row()
 
     def _nearest_obstacle_row(self):
