@@ -2,7 +2,7 @@ import random
 import pygame
 from game.entities.obstacle import Obstacle
 from game.utils.enums import HeightBand
-from game.settings import GRID_SIZE_WIDTH, GRID_SIZE_HEIGHT, SPAWN_ROW
+from game.settings import GRID_SIZE_WIDTH, GRID_SIZE_HEIGHT, SPAWN_ROW, MIN_OBSTACLE_SPEED, SPEED_INCREMENT, SPEED_STEP_MS
 
 class ObstacleSpawner:
     def __init__(self, obstacle_group: pygame.sprite.Group) -> None:
@@ -28,13 +28,17 @@ class ObstacleSpawner:
             return None
         return min(obstacle.gy for obstacle in self.group)
 
+    def _current_speed(self) -> float:
+        return MIN_OBSTACLE_SPEED + SPEED_INCREMENT * (self.elapsed_ms // SPEED_STEP_MS)
+
     def _spawn_row(self) -> None:
+        speed = self._current_speed()
         safe_lane = random.randrange(GRID_SIZE_WIDTH)
         for lane in range(GRID_SIZE_WIDTH):
             if lane == safe_lane or random.random() < 0.5:
                 continue
             band = random.choice([HeightBand.GROUND, HeightBand.OVERHEAD])
             if band == HeightBand.GROUND:
-                self.group.add(Obstacle(lane, SPAWN_ROW, band, (0, 255, 0)))
+                self.group.add(Obstacle(lane, SPAWN_ROW, band, (0, 255, 0), speed))
             else:
-                self.group.add(Obstacle(lane, SPAWN_ROW, band, (180, 60, 40)))
+                self.group.add(Obstacle(lane, SPAWN_ROW, band, (180, 60, 40), speed))

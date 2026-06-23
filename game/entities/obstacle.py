@@ -1,13 +1,14 @@
 import pygame
-from game.settings import GRID_SIZE_HEIGHT, OBSTACLE_SPEED
+from game.settings import GRID_SIZE_HEIGHT
 from game.utils.enums import HeightBand
 from game.utils.isometric_handler import screen_to_iso_complete
 
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, gx: int, gy: int, height_band: HeightBand, col) -> None:
+    def __init__(self, gx: int, gy: int, height_band: HeightBand, col, speed: float) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.gx, self.gy = gx, gy
+        self.speed = speed
 
         self.height_band = height_band
         height = 60 if height_band == HeightBand.FULL else 30
@@ -19,7 +20,7 @@ class Obstacle(pygame.sprite.Sprite):
         self._sync_rect()
 
     def step_forward(self, dt) -> None:
-        self.gy += OBSTACLE_SPEED * dt / 1000
+        self.gy += self.speed * dt / 1000
         self._sync_rect()
 
     def is_past_border (self) -> bool:
