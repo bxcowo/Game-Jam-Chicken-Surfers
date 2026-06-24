@@ -8,12 +8,14 @@ _player_frames = {}
 _button_sprites = {}
 _backgrounds = {}
 _game_images = {}
+_sound_effects = {}
 
 def load():
     global _player_frames
     global _button_sprites
     global _backgrounds
     global _game_images
+    global _sound_effects
 
     _player_frames = {
         PlayerState.RUNNING: SpriteSheet("assets/chicken_sprites/ChickenWalking.png", num_frames=4, width=20, height=21).get_frames(),
@@ -41,6 +43,25 @@ def load():
         "lose_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/lose_title.png").convert_alpha(), (650, 170))
     }
 
+    _sound_effects = {
+        "intro_sound": pygame.mixer.Sound("assets/sounds/intro_sound.wav"),
+        "main_menu_bg_sound": pygame.mixer.Sound("assets/sounds/main_menu_bg_sound.wav"),
+        "game_over_sound": pygame.mixer.Sound("assets/sounds/game_over.wav"),
+        "playing_bg_sound_1": pygame.mixer.Sound("assets/sounds/playing_bg_sound_1.wav"),
+        "playing_bg_sound_2": pygame.mixer.Sound("assets/sounds/playing_bg_sound_2.wav"),
+        "playing_bg_sound_3": pygame.mixer.Sound("assets/sounds/playing_bg_sound_3.wav"),
+        "playing_bg_sound_4": pygame.mixer.Sound("assets/sounds/playing_bg_sound_4.wav"),
+        "button_pressed_sound_1": pygame.mixer.Sound("assets/sounds/button_click_1.wav"),
+        "button_pressed_sound_2": pygame.mixer.Sound("assets/sounds/button_click_2.wav"),
+        "button_pressed_sound_3": pygame.mixer.Sound("assets/sounds/button_click_3.wav"),
+        "hit_sound": pygame.mixer.Sound("assets/sounds/collition_sound.wav"),
+        "coin_sound_effect": pygame.mixer.Sound("assets/sounds/coin_sound_effect.wav"),
+        "fly_sound_effect": pygame.mixer.Sound("assets/sounds/flying_sound_effect.wav"),
+        "roll_sound_effect": pygame.mixer.Sound("assets/sounds/rolling_sound_effect.wav"),
+        "upgradable_sound_effect": pygame.mixer.Sound("assets/sounds/upgrade_sound_effect.wav"),
+        "winner_sound": pygame.mixer.Sound("assets/sounds/winning_sound.wav")
+    }
+
 def get_player_frames(state: PlayerState) -> list[pygame.Surface]:
     return _player_frames[state]
 
@@ -52,3 +73,6 @@ def get_backgrounds(key: str) -> pygame.Surface:
 
 def get_game_image(key: str) -> pygame.Surface:
     return _game_images[key]
+
+def get_sound_effects(key: str) -> pygame.mixer.Sound:
+    return _sound_effects[key]

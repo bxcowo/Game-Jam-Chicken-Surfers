@@ -6,6 +6,7 @@ from game.systems.observer import Observer
 from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, PLAYER_ANIMATION_SPEED, ROLL_DURATION_MS, PLAYER_ROW
 from game.utils.enums import HeightBand, PlayerState
 from game.utils.resources import get_player_frames
+from game.utils.resources import get_sound_effects
 
 
 class Player(pygame.sprite.Sprite, Observer):
@@ -24,6 +25,9 @@ class Player(pygame.sprite.Sprite, Observer):
         self.image = self.images[self.image_index]
         self.rect = self.image.get_rect()
 
+        self.fly_sound = get_sound_effects("fly_sound_effect")
+        self.roll_sound = get_sound_effects("roll_sound_effect")
+
         self._sync_rect()
 
     def on_event(self, event: pygame.event.Event) -> None:
@@ -31,12 +35,16 @@ class Player(pygame.sprite.Sprite, Observer):
             return
         if event.key == K_RIGHT and self.gx < GRID_SIZE_WIDTH - 1:
             self.gx += 1
+            self.roll_sound.play()
         elif event.key == K_LEFT and self.gx > 0:
             self.gx -= 1
+            self.roll_sound.play()
         elif event.key == K_UP and self.state == PlayerState.RUNNING:
             self._set_state(PlayerState.JUMPING)
+            self.fly_sound.play()
         elif event.key == K_DOWN and self.state == PlayerState.RUNNING:
             self._set_state(PlayerState.ROLLING)
+            self.roll_sound.play()
         self._sync_rect()
 
     def update(self, dt: int) -> None:
