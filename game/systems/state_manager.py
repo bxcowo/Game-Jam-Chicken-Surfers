@@ -6,15 +6,17 @@ from game.states.playing_state import PlayingState
 from game.states.winner_state import WinnerState
 from game.states.lose_state import LoseState
 from game.systems.transitions import Transition
+from game.utils.dataclasses import GameContext
 
 
 class StateManager:
     def __init__(self) -> None:
+        self.context = GameContext()
         self.states = {
             "menu": MainMenuState(),
-            "playing": PlayingState(),
-            "infinity": PlayingState(True),
-            "lose": LoseState(),
+            "playing": PlayingState(self.context.change_normal_mode()),
+            "infinity": PlayingState(self.context.change_infinity_mode()),
+            "lose": LoseState(self.context),
             "winner": WinnerState()
         }
         self._transition = Transition()

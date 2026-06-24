@@ -11,3 +11,16 @@ class GameSession:
     obstacles: pygame.sprite.Group
     spawner: ObstacleSpawner
     collisions: CollisionSystem
+
+@dataclass
+class GameContext:
+    score: float = 0
+    is_infinity: bool = False
+
+    def change_infinity_mode(self) -> "GameContext":
+        self.is_infinity = True
+        return self
+
+    def change_normal_mode(self) -> "GameContext":
+        self.is_infinity = False
+        return self
