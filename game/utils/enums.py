@@ -13,6 +13,12 @@ class PlayerState(Enum):
     ROLLING = auto()
 
 
+class CollectibleType(Enum):
+    KETCHUP = auto()
+    MAYONESA = auto()
+    AJI = auto()
+
+
 class ButtonContent(Enum):
     PLAY = auto()
     QUIT = auto()
