@@ -20,6 +20,8 @@ class PlayingState:
                 key=lambda t: t[0] + t[1]
             )
         )
+        self.score: float = 0.0
+        self.score_font = pygame.font.SysFont(None, 36)
     def enter(self) -> None:
         self.input_manager.subscribe(self.player)
 
@@ -29,6 +31,7 @@ class PlayingState:
     def update(self, dt: int) -> None:
         if self.game_over:
             return
+        self.score += dt / 1000
         self.player.update(dt)
         self.spawner.update(dt)
         self.collisions.check()
@@ -36,6 +39,8 @@ class PlayingState:
     def draw(self, surface) -> None:
         self.obstacles.draw(surface)
         surface.blit(self.player.image, self.player.rect)
+        score_text = self.score_font.render(f"Score: {int(self.score)}", True, (255, 255, 255))
+        surface.blit(score_text, (10, 10))
 
     def _on_collision(self) -> None:
         self.game_over = True

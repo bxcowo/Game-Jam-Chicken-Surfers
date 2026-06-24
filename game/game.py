@@ -48,6 +48,7 @@ class Game:
 
     def _check_state_transition(self) -> None:
         if isinstance(self.state, PlayingState) and self.state.game_over:
+            score = int(self.state.score)
             self.state.exit()
-            self.state = LoseState()
+            self.state = LoseState(score)
             self.state.enter()
