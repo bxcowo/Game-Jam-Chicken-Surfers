@@ -27,6 +27,7 @@ class LoseState(State):
         self.input_manager.subscribe(self.back_menu_button)
 
     def exit(self) -> None:
+        self.context.score = 0
         self.restart_button.reset()
         self.back_menu_button.reset()
         self.input_manager.unsubscribe(self.restart_button)
