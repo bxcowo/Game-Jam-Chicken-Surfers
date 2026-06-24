@@ -41,3 +41,10 @@ SWITCH_STATE = pygame.USEREVENT + 1
 
 # Tiempo de transición
 FADE_DURATION = 300
+
+# Configuración de coleccionables
+COLLECTIBLE_VALUES = {
+    "KETCHUP": 1,
+    "MAYONESA": 2,
+    "AJI": 3,
+}
