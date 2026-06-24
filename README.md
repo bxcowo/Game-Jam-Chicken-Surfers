@@ -1,4 +1,4 @@
-# Chicken Subway
+# Chicken Surfers
 
 ## Premisa
 Eres un pequeño pollo que tuvo la mala suerte de cruzarse con un estudiante de Ciencias de la Computación en un país latinoamericano sin salida laboral que tiene demasiada hambre. Tu objetivo es escapar de este desesperado y desafortunado joven antes que te haga un pollo a la brasa con papas fritas.
