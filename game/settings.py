@@ -1,3 +1,6 @@
+import pygame
+
+
 # Configuración de pantalla de juego
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -30,3 +33,9 @@ DIFFICULTY_RAMP_MS = 20_000
 
 # Threshold para detección de colisión entre jugador y obstaculos.
 HIT_TOLERANCE = 0.4
+
+# Código para eventos personalizados
+SWITCH_STATE = pygame.USEREVENT + 1
+
+# Tiempo de transición
+FADE_DURATION = 300

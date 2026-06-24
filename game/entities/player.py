@@ -5,7 +5,7 @@ from game.utils.isometric_handler import screen_to_iso_x, screen_to_iso_y
 from game.systems.observer import Observer
 from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, PLAYER_ANIMATION_SPEED, ROLL_DURATION_MS, PLAYER_ROW
 from game.utils.enums import HeightBand, PlayerState
-from game.utils import resources
+from game.utils.resources import get_player_frames
 
 
 class Player(pygame.sprite.Sprite, Observer):
@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite, Observer):
         self.state = PlayerState.RUNNING
         self.state_timer = 0
 
-        self.images = resources.get(self.state)
+        self.images = get_player_frames(self.state)
         self.image_index = 0
         self.image_counter = 0
         self.image = self.images[self.image_index]
@@ -74,7 +74,7 @@ class Player(pygame.sprite.Sprite, Observer):
         self.state_timer = 0
         self.image_index = 0
         self.image_counter = 0
-        self.images = resources.get(new_state)
+        self.images = get_player_frames(new_state)
         self.image = self.images[self.image_index]
 
     def is_vulnerable_to(self, height_band: HeightBand) -> bool:
