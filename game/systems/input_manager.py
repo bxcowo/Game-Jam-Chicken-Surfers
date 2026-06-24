@@ -12,13 +12,6 @@ class InputManager:
         if observer in self._observers:
             self._observers.remove(observer)
 
-    def poll(self) -> bool:
-        running = True
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            for observer in self._observers:
-                observer.on_event(event)
-
-        return running
+    def distribute(self, event: pygame.event.Event) -> None:
+        for observer in self._observers:
+            observer.on_event(event)
