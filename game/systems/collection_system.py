@@ -1,0 +1,1 @@
+# Sistema de recoleccion de coleccionables, aqui va la logica de recoleccion y puntuacion, la definicion de los eventos
