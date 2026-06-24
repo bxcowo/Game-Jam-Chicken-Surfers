@@ -3,13 +3,16 @@ from dataclasses import dataclass
 from game.entities.player import Player
 from game.systems.collition_system import CollisionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
+from game.systems.collectible_spawner import CollectibleSpawner
 
 
 @dataclass
 class GameSession:
     player: Player
     obstacles: pygame.sprite.Group
+    collectibles: pygame.sprite.Group
     spawner: ObstacleSpawner
+    collectible_spawner: CollectibleSpawner
     collisions: CollisionSystem
 
 @dataclass

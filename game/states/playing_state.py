@@ -5,6 +5,7 @@ from game.settings import GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
 from game.systems.collition_system import CollisionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
+from game.systems.collectible_spawner import CollectibleSpawner
 from game.utils.dataclasses import GameContext, GameSession
 from game.utils.isometric_handler import draw_tile_iso
 from game.utils.resources import get_sound_effects
@@ -30,10 +31,13 @@ class PlayingState(State):
         self.game_over = False
         player = Player(1)
         obstacles = pygame.sprite.Group()
+        collectibles = pygame.sprite.Group()
         self.session = GameSession(
             player=player,
             obstacles=obstacles,
+            collectibles=collectibles,
             spawner=ObstacleSpawner(obstacles),
+            collectible_spawner=CollectibleSpawner(collectibles, obstacles),
             collisions=CollisionSystem(player, obstacles, self._on_collision)
         )
 
@@ -45,6 +49,7 @@ class PlayingState(State):
         if self.session:
             self.input_manager.unsubscribe(self.session.player)
             self.session.obstacles.empty()
+            self.session.collectibles.empty()
             self.session = None
 
     def update(self, dt: int) -> None:
@@ -55,6 +60,7 @@ class PlayingState(State):
             self.context.score += dt / 1000
             self.session.player.update(dt)
             self.session.spawner.update(dt)
+            self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -66,6 +72,7 @@ class PlayingState(State):
 
         if self.session:
             self.session.obstacles.draw(screen)
+            self.session.collectibles.draw(screen)
             screen.blit(self.session.player.image, self.session.player.rect)
             score_text = self.score_font.render(f"Score: {int(self.context.score)}", True, (255, 255, 255))
             screen.blit(score_text, (10, 10))
