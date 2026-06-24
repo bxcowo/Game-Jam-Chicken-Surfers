@@ -6,6 +6,7 @@ from game.ui.infinite_scroll_background import InfiniteScrollBackground
 from game.ui.panel import ImagePanel
 from game.utils.dataclasses import GameContext
 from game.utils.enums import ButtonContent
+from game.utils.resources import get_sound_effects
 
 
 class LoseState(State):
@@ -18,8 +19,10 @@ class LoseState(State):
         self.restart_button = Button(x=-110, y=500, content=ButtonContent.RESTART, on_click=self._restart_action)
         self.back_menu_button = Button(x=110, y=500, content=ButtonContent.MAIN_MENU, on_click=self._main_menu_action)
         self.lose_image = ImagePanel(x=0, y=300, key="pollo_ala_brasa")
+        self.game_over_music = get_sound_effects("game_over_sound")
 
     def enter(self) -> None:
+        self.game_over_music.play(0, 0, 9000)
         self.score_text = self.score_font.render(f"Score final: {int(self.context.score)}", True, (200, 200, 200))
         self.score_rect = self.score_text.get_rect()
         self.score_rect.center = (int(SCREEN_WIDTH/2), 440)
@@ -27,6 +30,7 @@ class LoseState(State):
         self.input_manager.subscribe(self.back_menu_button)
 
     def exit(self) -> None:
+        self.game_over_music.stop()
         self.context.score = 0
         self.restart_button.reset()
         self.back_menu_button.reset()

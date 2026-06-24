@@ -1,4 +1,5 @@
 import pygame
+import random
 from game.entities.player import Player
 from game.settings import GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
@@ -6,6 +7,7 @@ from game.systems.collition_system import CollisionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
 from game.utils.dataclasses import GameContext, GameSession
 from game.utils.isometric_handler import draw_tile_iso
+from game.utils.resources import get_sound_effects
 
 
 class PlayingState(State):
@@ -22,6 +24,9 @@ class PlayingState(State):
 
     def enter(self) -> None:
         # Asignación de atributos
+        self.num_effect = random.choice(["playing_bg_sound_1", "playing_bg_sound_2", "playing_bg_sound_3", "playing_bg_sound_4"])
+        self.bg_music = get_sound_effects(self.num_effect)
+        self.bg_music.play(-1, 0, 5000)
         self.game_over = False
         player = Player(1)
         obstacles = pygame.sprite.Group()
@@ -36,6 +41,7 @@ class PlayingState(State):
         self.input_manager.subscribe(self.session.player)
 
     def exit(self) -> None:
+        self.bg_music.stop()
         if self.session:
             self.input_manager.unsubscribe(self.session.player)
             self.session.obstacles.empty()
