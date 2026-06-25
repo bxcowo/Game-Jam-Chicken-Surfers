@@ -10,6 +10,8 @@ class CollisionSystem:
         self.hit_sound = get_sound_effects("hit_sound")
 
     def check(self) -> None:
+        if self.player.fly_timer > 0:
+            return
         for obstacle in self.obstacle_group:
             if obstacle.gx != self.player.gx:
                 continue
