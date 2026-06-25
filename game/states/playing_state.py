@@ -4,6 +4,7 @@ from game.entities.player import Player
 from game.settings import GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
 from game.systems.collition_system import CollisionSystem
+from game.systems.collection_system import CollectionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
 from game.systems.collectible_spawner import CollectibleSpawner
 from game.utils.dataclasses import GameContext, GameSession
@@ -38,7 +39,8 @@ class PlayingState(State):
             collectibles=collectibles,
             spawner=ObstacleSpawner(obstacles),
             collectible_spawner=CollectibleSpawner(collectibles, obstacles),
-            collisions=CollisionSystem(player, obstacles, self._on_collision)
+            collisions=CollisionSystem(player, obstacles, self._on_collision),
+            collections=CollectionSystem(player, collectibles, self.context)
         )
 
         # Subscipcion de jugador
@@ -62,6 +64,7 @@ class PlayingState(State):
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
+            self.session.collections.check()
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.fill((30, 30, 30))
