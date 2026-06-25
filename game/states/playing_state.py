@@ -8,6 +8,7 @@ from game.systems.collection_system import CollectionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
 from game.systems.collectible_spawner import CollectibleSpawner
 from game.utils.dataclasses import GameContext, GameSession
+from game.ui.infinite_scroll_background import InfiniteScrollBackground
 from game.utils.isometric_handler import draw_tile_iso
 from game.utils.resources import get_sound_effects
 
@@ -23,6 +24,8 @@ class PlayingState(State):
             key=lambda t: t[0] + t[1]
         )
         self.score_font = pygame.font.SysFont(None, 36)
+        self.sky_bg = InfiniteScrollBackground("sky_bg")
+        self._flying: bool = False
 
     def enter(self) -> None:
         # Asignación de atributos
@@ -64,17 +67,33 @@ class PlayingState(State):
                 score_rate *= 2
             self.context.score += score_rate
             self.session.player.update(dt)
+
+            player = self.session.player
+            if player.fly_timer > 0 and not self._flying:
+                self._flying = True
+                self.session.obstacles.empty()
+                self.session.spawner.paused = True
+                self.session.collectible_spawner.boosted = True
+            elif player.fly_timer == 0 and self._flying:
+                self._flying = False
+                self.session.spawner.paused = False
+                self.session.collectible_spawner.boosted = False
+
+            if self._flying:
+                self.sky_bg.update(dt)
+
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
             self.session.collections.check()
 
     def draw(self, screen: pygame.Surface) -> None:
-        screen.fill((30, 30, 30))
-
-        for gx, gy in self.draw_order:
-            color = (100, 150, 100)
-            draw_tile_iso(screen, gx, gy, color)
+        if self._flying:
+            self.sky_bg.draw(screen)
+        else:
+            screen.fill((30, 30, 30))
+            for gx, gy in self.draw_order:
+                draw_tile_iso(screen, gx, gy, (100, 150, 100))
 
         if self.session:
             self.session.obstacles.draw(screen)
@@ -90,6 +109,10 @@ class PlayingState(State):
             if self.session.player.double_score_timer > 0:
                 double_text = self.score_font.render(f"x2 Score: {self.session.player.double_score_timer / 1000:.1f}s", True, (255, 255, 255))
                 screen.blit(double_text, (10, hud_y))
+                hud_y += 30
+            if self.session.player.fly_timer > 0:
+                fly_text = self.score_font.render(f"Volar: {self.session.player.fly_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(fly_text, (10, hud_y))
 
     def _on_collision(self) -> None:
         self.game_over = True
