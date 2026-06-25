@@ -79,6 +79,9 @@ class PlayingState(State):
             screen.blit(self.session.player.image, self.session.player.rect)
             score_text = self.score_font.render(f"Score: {int(self.context.score)}", True, (255, 255, 255))
             screen.blit(score_text, (10, 10))
+            if self.session.player.shield_timer > 0:
+                shield_text = self.score_font.render(f"Escudo: {self.session.player.shield_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(shield_text, (10, 40))
 
     def _on_collision(self) -> None:
         self.game_over = True
