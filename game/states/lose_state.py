@@ -52,7 +52,8 @@ class LoseState(State):
         self.input_manager.distribute(event)
 
     def _restart_action(self):
-        pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "playing"}))
+        target = "infinity" if self.context.is_infinity else "playing"
+        pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": target}))
 
     def _main_menu_action(self):
         pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "menu"}))

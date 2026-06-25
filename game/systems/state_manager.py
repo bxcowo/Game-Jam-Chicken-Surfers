@@ -11,13 +11,15 @@ from game.utils.dataclasses import GameContext
 
 class StateManager:
     def __init__(self) -> None:
-        self.context = GameContext()
+        self.normal_mode_context = GameContext()
+        self.infinite_mode_context = GameContext(is_infinity=True)
         self.states = {
             "menu": MainMenuState(),
-            "playing": PlayingState(self.context.change_normal_mode()),
-            "infinity": PlayingState(self.context.change_infinity_mode()),
-            "lose": LoseState(self.context),
-            "winner": WinnerState()
+            "playing": PlayingState(self.normal_mode_context),
+            "infinity": PlayingState(self.infinite_mode_context),
+            "finite_lose": LoseState(self.normal_mode_context),
+            "infinite_lose": LoseState(self.infinite_mode_context),
+            "winner": WinnerState(self.normal_mode_context)
         }
         self._transition = Transition()
         self.current: State = self.states["menu"]

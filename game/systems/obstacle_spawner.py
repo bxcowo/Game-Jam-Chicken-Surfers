@@ -9,6 +9,7 @@ class ObstacleSpawner:
         self.group = obstacle_group
         self.elapsed_ms = 0
         self.next_gap = 0
+        self.paused: bool = False
 
     def update(self, dt: int) -> None:
         self.elapsed_ms += dt
@@ -18,6 +19,8 @@ class ObstacleSpawner:
             if obstacle.is_past_border():
                 obstacle.kill()
 
+        if self.paused:
+            return
         nearest = self._nearest_obstacle_row()
         if nearest is None or nearest >= self.next_gap:
             gap_min, gap_max = self._current_gap_range()

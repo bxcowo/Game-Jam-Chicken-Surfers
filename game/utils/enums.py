@@ -17,6 +17,9 @@ class CollectibleType(Enum):
     KETCHUP = auto()
     MAYONESA = auto()
     AJI = auto()
+    ESCUDO = auto()
+    DOBLE_SCORE = auto()
+    VOLAR = auto()
 
 
 class ButtonContent(Enum):
