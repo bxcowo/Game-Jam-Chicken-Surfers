@@ -1,11 +1,12 @@
 import pygame
 import random
 from game.entities.player import Player
-from game.settings import GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
+from game.settings import FINITE_MODE_DURATION_MS, GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
 from game.systems.collition_system import CollisionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
 from game.systems.collectible_spawner import CollectibleSpawner
+from game.ui.progress_bar import ProgressBar
 from game.utils.dataclasses import GameContext, GameSession
 from game.utils.isometric_handler import draw_tile_iso
 from game.utils.resources import get_sound_effects
@@ -22,6 +23,11 @@ class PlayingState(State):
             key=lambda t: t[0] + t[1]
         )
         self.score_font = pygame.font.SysFont(None, 36)
+        self.progress_bar = ProgressBar(
+            x=275, y=25, width=300, height=16,
+            color_full=(255, 255, 255),
+            color_empty=(60, 60, 60)
+        )
 
     def enter(self) -> None:
         # Asignación de atributos
@@ -29,6 +35,7 @@ class PlayingState(State):
         self.bg_music = get_sound_effects(self.num_effect)
         self.bg_music.play(-1, 0, 5000)
         self.game_over = False
+        self.time_elapsed_ms = 0
         player = Player(1)
         obstacles = pygame.sprite.Group()
         collectibles = pygame.sprite.Group()
@@ -54,14 +61,24 @@ class PlayingState(State):
 
     def update(self, dt: int) -> None:
         if self.game_over:
-            pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "lose"}))
+            target = "infinite_lose" if self.context.is_infinity else "finite_lose"
+            pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": target}))
             return
         if self.session:
             self.context.score += dt / 1000
+            self.time_elapsed_ms += dt
             self.session.player.update(dt)
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
+            # Verificación de la culminación del tiempo finito
+            if not self.context.is_infinity and self.time_elapsed_ms >= FINITE_MODE_DURATION_MS:
+                pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "winner"}))
+                return
+            # Actualización de la barra de progreso solo en modo finito
+            if not self.context.is_infinity:
+                remaining = 1.0 - (self.time_elapsed_ms / FINITE_MODE_DURATION_MS)
+                self.progress_bar.update(remaining)
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.fill((30, 30, 30))
@@ -74,8 +91,12 @@ class PlayingState(State):
             self.session.obstacles.draw(screen)
             self.session.collectibles.draw(screen)
             screen.blit(self.session.player.image, self.session.player.rect)
+
             score_text = self.score_font.render(f"Score: {int(self.context.score)}", True, (255, 255, 255))
-            screen.blit(score_text, (10, 10))
+            screen.blit(score_text, (10, 20))
+
+            if not self.context.is_infinity:
+                self.progress_bar.draw(screen)
 
     def _on_collision(self) -> None:
         self.game_over = True
