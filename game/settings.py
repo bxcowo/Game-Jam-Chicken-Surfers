@@ -1,5 +1,7 @@
 import pygame
 
+from game.utils.enums import CollectibleType
+
 
 # Configuración de pantalla de juego
 SCREEN_WIDTH = 800
@@ -44,7 +46,7 @@ FADE_DURATION = 300
 
 # Configuración de coleccionables
 COLLECTIBLE_VALUES = {
-    "KETCHUP": 1,
-    "MAYONESA": 2,
-    "AJI": 3,
+    CollectibleType.KETCHUP: 5,
+    CollectibleType.MAYONESA: 10,
+    CollectibleType.AJI: 15,
 }
