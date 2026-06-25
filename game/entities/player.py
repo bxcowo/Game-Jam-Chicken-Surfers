@@ -28,6 +28,11 @@ class Player(pygame.sprite.Sprite, Observer):
         self.fly_sound = get_sound_effects("fly_sound_effect")
         self.roll_sound = get_sound_effects("roll_sound_effect")
 
+        self.shield_timer: float = 0
+        self.double_score_timer: float = 0
+        self.fly_timer: float = 0
+        self._flying: bool = False
+
         self._sync_rect()
 
     def on_event(self, event: pygame.event.Event) -> None:
@@ -39,16 +44,39 @@ class Player(pygame.sprite.Sprite, Observer):
         elif event.key == K_LEFT and self.gx > 0:
             self.gx -= 1
             self.roll_sound.play()
-        elif event.key == K_UP and self.state == PlayerState.RUNNING:
+        elif event.key == K_UP and self.state == PlayerState.RUNNING and not self._flying:
             self._set_state(PlayerState.JUMPING)
             self.fly_sound.play()
-        elif event.key == K_DOWN and self.state == PlayerState.RUNNING:
+        elif event.key == K_DOWN and self.state == PlayerState.RUNNING and not self._flying:
             self._set_state(PlayerState.ROLLING)
             self.roll_sound.play()
         self._sync_rect()
 
     def update(self, dt: int) -> None:
-        if self.state == PlayerState.JUMPING:
+        if self.shield_timer > 0:
+            self.shield_timer = max(0, self.shield_timer - dt)
+        if self.double_score_timer > 0:
+            self.double_score_timer = max(0, self.double_score_timer - dt)
+        if self.fly_timer > 0:
+            self.fly_timer = max(0, self.fly_timer - dt)
+
+        if self.fly_timer > 0 and not self._flying:
+            self._flying = True
+            self.images = get_player_frames(PlayerState.JUMPING)
+            self.image_index = 0
+            self.image_counter = 0
+            self.image = self.images[self.image_index]
+        elif self.fly_timer == 0 and self._flying:
+            self._flying = False
+            self.z = 0
+            self.images = get_player_frames(PlayerState.RUNNING)
+            self.image_index = 0
+            self.image_counter = 0
+            self.image = self.images[self.image_index]
+
+        if self._flying:
+            self.z = JUMP_VISUAL_LIFT
+        elif self.state == PlayerState.JUMPING:
             self.state_timer += dt
             progress = min(self.state_timer / JUMP_DURATION_MS, 1.0)
             self.z = JUMP_VISUAL_LIFT * math.sin(progress * math.pi)

@@ -4,10 +4,12 @@ from game.entities.player import Player
 from game.settings import FINITE_MODE_DURATION_MS, GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
 from game.systems.collition_system import CollisionSystem
+from game.systems.collection_system import CollectionSystem
 from game.systems.obstacle_spawner import ObstacleSpawner
 from game.systems.collectible_spawner import CollectibleSpawner
 from game.ui.progress_bar import ProgressBar
 from game.utils.dataclasses import GameContext, GameSession
+from game.ui.infinite_scroll_background import InfiniteScrollBackground
 from game.utils.isometric_handler import draw_tile_iso
 from game.utils.resources import get_sound_effects
 
@@ -23,6 +25,8 @@ class PlayingState(State):
             key=lambda t: t[0] + t[1]
         )
         self.score_font = pygame.font.SysFont(None, 36)
+        self.sky_bg = InfiniteScrollBackground("sky_bg")
+        self._flying: bool = False
         self.progress_bar = ProgressBar(
             x=275, y=25, width=300, height=16,
             color_full=(255, 255, 255),
@@ -45,7 +49,8 @@ class PlayingState(State):
             collectibles=collectibles,
             spawner=ObstacleSpawner(obstacles),
             collectible_spawner=CollectibleSpawner(collectibles, obstacles),
-            collisions=CollisionSystem(player, obstacles, self._on_collision)
+            collisions=CollisionSystem(player, obstacles, self._on_collision),
+            collections=CollectionSystem(player, collectibles, self.context)
         )
 
         # Subscipcion de jugador
@@ -65,12 +70,32 @@ class PlayingState(State):
             pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": target}))
             return
         if self.session:
-            self.context.score += dt / 1000
+            score_rate = dt / 1000
+            if self.session.player.double_score_timer > 0:
+                score_rate *= 2
+            self.context.score += score_rate
             self.time_elapsed_ms += dt
             self.session.player.update(dt)
+
+            player = self.session.player
+            if player.fly_timer > 0 and not self._flying:
+                self._flying = True
+                self.session.obstacles.empty()
+                self.session.spawner.paused = True
+                self.session.collectible_spawner.boosted = True
+            elif player.fly_timer == 0 and self._flying:
+                self._flying = False
+                self.session.spawner.paused = False
+                self.session.collectible_spawner.boosted = False
+
+            if self._flying:
+                self.sky_bg.update(dt)
+
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
+            self.session.collections.check()
+            
             # Verificación de la culminación del tiempo finito
             if not self.context.is_infinity and self.time_elapsed_ms >= FINITE_MODE_DURATION_MS:
                 pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "winner"}))
@@ -81,11 +106,12 @@ class PlayingState(State):
                 self.progress_bar.update(remaining)
 
     def draw(self, screen: pygame.Surface) -> None:
-        screen.fill((30, 30, 30))
-
-        for gx, gy in self.draw_order:
-            color = (100, 150, 100)
-            draw_tile_iso(screen, gx, gy, color)
+        if self._flying:
+            self.sky_bg.draw(screen)
+        else:
+            screen.fill((30, 30, 30))
+            for gx, gy in self.draw_order:
+                draw_tile_iso(screen, gx, gy, (100, 150, 100))
 
         if self.session:
             self.session.obstacles.draw(screen)
@@ -94,7 +120,18 @@ class PlayingState(State):
 
             score_text = self.score_font.render(f"Score: {int(self.context.score)}", True, (255, 255, 255))
             screen.blit(score_text, (10, 20))
-
+            hud_y = 40
+            if self.session.player.shield_timer > 0:
+                shield_text = self.score_font.render(f"Escudo: {self.session.player.shield_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(shield_text, (10, hud_y))
+                hud_y += 30
+            if self.session.player.double_score_timer > 0:
+                double_text = self.score_font.render(f"x2 Score: {self.session.player.double_score_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(double_text, (10, hud_y))
+                hud_y += 30
+            if self.session.player.fly_timer > 0:
+                fly_text = self.score_font.render(f"Volar: {self.session.player.fly_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(fly_text, (10, hud_y))
             if not self.context.is_infinity:
                 self.progress_bar.draw(screen)
 

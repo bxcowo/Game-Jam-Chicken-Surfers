@@ -35,6 +35,7 @@ def load():
     _backgrounds = {
         "main_menu": pygame.transform.scale(pygame.image.load("assets/background_images/menu_city.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "lose_bg": pygame.transform.scale(pygame.image.load("assets/background_images/brick_wall_purple.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
+        "sky_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
         "win_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
     }
 

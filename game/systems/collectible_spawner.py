@@ -11,6 +11,7 @@ class CollectibleSpawner:
         self.obstacle_group = obstacle_group
         self.elapsed_ms = 0
         self.next_gap = 0
+        self.boosted: bool = False
 
     def update(self, dt: int) -> None:
         self.elapsed_ms += dt
@@ -21,8 +22,9 @@ class CollectibleSpawner:
                 collectible.kill()
 
         nearest = self._nearest_collectible_row()
+        gap_range = (1, 2) if self.boosted else (1, 3)
         if nearest is None or nearest >= self.next_gap:
-            self.next_gap = random.randint(1, 3)
+            self.next_gap = random.randint(*gap_range)
             self._spawn_collectible()
 
     def _nearest_collectible_row(self):

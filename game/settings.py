@@ -1,4 +1,5 @@
 import pygame
+from game.utils.enums import CollectibleType
 
 
 # Configuración de pantalla de juego
@@ -44,10 +45,18 @@ FADE_DURATION = 300
 
 # Configuración de coleccionables
 COLLECTIBLE_VALUES = {
-    "KETCHUP": 1,
-    "MAYONESA": 2,
-    "AJI": 3,
+    CollectibleType.KETCHUP: 5,
+    CollectibleType.MAYONESA: 10,
+    CollectibleType.AJI: 15,
+}
+
+# Configuración de duraciones de power-ups
+POWERUP_DURATIONS = {
+    CollectibleType.ESCUDO: 6000,
+    CollectibleType.DOBLE_SCORE: 8000,
+    CollectibleType.VOLAR: 7000,
 }
 
 # Tiempo de juego normal
 FINITE_MODE_DURATION_MS = 150_000
+
