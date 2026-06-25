@@ -48,3 +48,6 @@ COLLECTIBLE_VALUES = {
     "MAYONESA": 2,
     "AJI": 3,
 }
+
+# Tiempo de juego normal
+FINITE_MODE_DURATION_MS = 150_000
