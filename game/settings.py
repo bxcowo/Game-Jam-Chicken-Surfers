@@ -1,5 +1,4 @@
 import pygame
-
 from game.utils.enums import CollectibleType
 
 
@@ -57,3 +56,7 @@ POWERUP_DURATIONS = {
     CollectibleType.DOBLE_SCORE: 8000,
     CollectibleType.VOLAR: 7000,
 }
+
+# Tiempo de juego normal
+FINITE_MODE_DURATION_MS = 150_000
+

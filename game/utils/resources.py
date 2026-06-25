@@ -36,12 +36,15 @@ def load():
         "main_menu": pygame.transform.scale(pygame.image.load("assets/background_images/menu_city.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "lose_bg": pygame.transform.scale(pygame.image.load("assets/background_images/brick_wall_purple.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "sky_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
+        "win_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
     }
 
     _game_images = {
         "game_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/game_title.png").convert_alpha(), (800, 110)),
         "pollo_ala_brasa": pygame.transform.scale(pygame.image.load("assets/game_images/pollo_ala_brasa.png").convert(), (375, 225)),
-        "lose_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/lose_title.png").convert_alpha(), (650, 170))
+        "lose_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/lose_title.png").convert_alpha(), (650, 170)),
+        "win_image": pygame.transform.scale(pygame.image.load("assets/game_images/victory_image.png").convert(), (375, 225)),
+        "win_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/victory_title.png").convert_alpha(), (650, 100)),
     }
 
     _sound_effects = {
