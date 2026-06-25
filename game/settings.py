@@ -50,3 +50,10 @@ COLLECTIBLE_VALUES = {
     CollectibleType.MAYONESA: 10,
     CollectibleType.AJI: 15,
 }
+
+# Configuración de duraciones de power-ups
+POWERUP_DURATIONS = {
+    CollectibleType.ESCUDO: 6000,
+    CollectibleType.DOBLE_SCORE: 8000,
+    CollectibleType.VOLAR: 7000,
+}
