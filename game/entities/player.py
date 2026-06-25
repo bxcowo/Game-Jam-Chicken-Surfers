@@ -28,6 +28,8 @@ class Player(pygame.sprite.Sprite, Observer):
         self.fly_sound = get_sound_effects("fly_sound_effect")
         self.roll_sound = get_sound_effects("roll_sound_effect")
 
+        self.shield_timer: float = 0
+
         self._sync_rect()
 
     def on_event(self, event: pygame.event.Event) -> None:
@@ -48,6 +50,9 @@ class Player(pygame.sprite.Sprite, Observer):
         self._sync_rect()
 
     def update(self, dt: int) -> None:
+        if self.shield_timer > 0:
+            self.shield_timer = max(0, self.shield_timer - dt)
+
         if self.state == PlayerState.JUMPING:
             self.state_timer += dt
             progress = min(self.state_timer / JUMP_DURATION_MS, 1.0)

@@ -16,6 +16,10 @@ class CollisionSystem:
             if abs(obstacle.gy - PLAYER_ROW) > HIT_TOLERANCE:
                 continue
             if self.player.is_vulnerable_to(obstacle.height_band):
+                if self.player.shield_timer > 0:
+                    self.player.shield_timer = 0
+                    obstacle.kill()
+                    return
                 self.hit_sound.play()
                 self.on_collision()
                 return
