@@ -10,19 +10,19 @@ FPS = 60
 TILE_WIDTH = 120
 TILE_HEIGHT = 60
 GRID_SIZE_WIDTH = 3
-GRID_SIZE_HEIGHT = 10
-
-# Offset de muestra de recuadros
-ORIGIN_X = (SCREEN_WIDTH) / 1.3
-ORIGIN_Y = 200
+GRID_SIZE_HEIGHT = 16
 
 # Configuración de tiempos y espacios para el movimiento del jugador
 JUMP_DURATION_MS = 1100
 JUMP_VISUAL_LIFT = 40
 ROLL_DURATION_MS = 1100
 LANE_SWAP_SPEED = 10
-PLAYER_ROW = 5
+PLAYER_ROW = 8
 PLAYER_ANIMATION_SPEED = 4
+
+# Offset de muestra de recuadros
+ORIGIN_X = SCREEN_WIDTH // 2 + (PLAYER_ROW - 1) * (TILE_WIDTH // 2)
+ORIGIN_Y = 95
 
 # Configuración de generación de obstaculos
 MIN_OBSTACLE_SPEED = 2
