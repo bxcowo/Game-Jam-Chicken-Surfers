@@ -59,7 +59,10 @@ class PlayingState(State):
             pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "lose"}))
             return
         if self.session:
-            self.context.score += dt / 1000
+            score_rate = dt / 1000
+            if self.session.player.double_score_timer > 0:
+                score_rate *= 2
+            self.context.score += score_rate
             self.session.player.update(dt)
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
@@ -79,9 +82,14 @@ class PlayingState(State):
             screen.blit(self.session.player.image, self.session.player.rect)
             score_text = self.score_font.render(f"Score: {int(self.context.score)}", True, (255, 255, 255))
             screen.blit(score_text, (10, 10))
+            hud_y = 40
             if self.session.player.shield_timer > 0:
                 shield_text = self.score_font.render(f"Escudo: {self.session.player.shield_timer / 1000:.1f}s", True, (255, 255, 255))
-                screen.blit(shield_text, (10, 40))
+                screen.blit(shield_text, (10, hud_y))
+                hud_y += 30
+            if self.session.player.double_score_timer > 0:
+                double_text = self.score_font.render(f"x2 Score: {self.session.player.double_score_timer / 1000:.1f}s", True, (255, 255, 255))
+                screen.blit(double_text, (10, hud_y))
 
     def _on_collision(self) -> None:
         self.game_over = True
