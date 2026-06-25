@@ -35,3 +35,6 @@ class CollectionSystem:
         elif ctype == CollectibleType.DOBLE_SCORE:
             self.player.double_score_timer = POWERUP_DURATIONS[CollectibleType.DOBLE_SCORE]
             self.upgrade_sound.play()
+        elif ctype == CollectibleType.VOLAR:
+            self.player.fly_timer = POWERUP_DURATIONS[CollectibleType.VOLAR]
+            self.upgrade_sound.play()
