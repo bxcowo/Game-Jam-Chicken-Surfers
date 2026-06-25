@@ -33,6 +33,11 @@ INITIAL_STEP_MS = 800
 MIN_STEP_MS = 250
 DIFFICULTY_RAMP_MS = 20_000
 
+# Etapas de dificultad de generación de obstaculos
+STAGE_2_MS = 90_000
+STAGE_3_MS = 180_000
+STAGE_4_MS = 270_000
+
 # Threshold para detección de colisión entre jugador y obstaculos.
 HIT_TOLERANCE = 0.4
 

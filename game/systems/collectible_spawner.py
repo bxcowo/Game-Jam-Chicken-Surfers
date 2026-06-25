@@ -36,10 +36,10 @@ class CollectibleSpawner:
     def _get_free_lanes(self) -> list[int]:
         occupied = set()
         for obstacle in self.obstacle_group:
-            if obstacle.gy <= 0.5:
+            if obstacle.gy <= 1.0:
                 occupied.add(obstacle.gx)
         for collectible in self.group:
-            if collectible.gy <= 0.5:
+            if collectible.gy <= 1.0:
                 occupied.add(collectible.gx)
         return [lane for lane in range(GRID_SIZE_WIDTH) if lane not in occupied]
 
