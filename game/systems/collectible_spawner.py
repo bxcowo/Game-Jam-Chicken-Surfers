@@ -20,6 +20,8 @@ class CollectibleSpawner:
             if collectible.is_past_border():
                 collectible.kill()
 
+        self._remove_overlapping()
+
         nearest = self._nearest_collectible_row()
         if nearest is None or nearest >= self.next_gap:
             self.next_gap = random.randint(1, 3)
@@ -32,6 +34,15 @@ class CollectibleSpawner:
 
     def _current_speed(self) -> float:
         return MIN_OBSTACLE_SPEED + SPEED_INCREMENT * (self.elapsed_ms // SPEED_STEP_MS)
+
+    def _remove_overlapping(self) -> None:
+        for collectible in list(self.group):
+            if collectible.gy > 1.0:
+                continue
+            for obstacle in self.obstacle_group:
+                if collectible.gx == obstacle.gx and abs(collectible.gy - obstacle.gy) < 1.0:
+                    collectible.kill()
+                    break
 
     def _get_free_lanes(self) -> list[int]:
         occupied = set()
@@ -52,11 +63,16 @@ class CollectibleSpawner:
         else:
             return CollectibleType.AJI, (255, 255, 0)
 
+    def _nearest_obstacle_speed(self) -> float:
+        if not self.obstacle_group:
+            return self._current_speed()
+        return min(self.obstacle_group, key=lambda o: o.gy).speed
+
     def _spawn_collectible(self) -> None:
         free_lanes = self._get_free_lanes()
         if not free_lanes:
             return
         lane = random.choice(free_lanes)
         collectible_type, color = self._random_type()
-        speed = self._current_speed()
+        speed = self._nearest_obstacle_speed()
         self.group.add(Collectible(lane, SPAWN_ROW, collectible_type, color, speed))
