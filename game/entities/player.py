@@ -29,6 +29,7 @@ class Player(pygame.sprite.Sprite, Observer):
         self.roll_sound = get_sound_effects("roll_sound_effect")
 
         self.shield_timer: float = 0
+        self.double_score_timer: float = 0
 
         self._sync_rect()
 
@@ -52,6 +53,8 @@ class Player(pygame.sprite.Sprite, Observer):
     def update(self, dt: int) -> None:
         if self.shield_timer > 0:
             self.shield_timer = max(0, self.shield_timer - dt)
+        if self.double_score_timer > 0:
+            self.double_score_timer = max(0, self.double_score_timer - dt)
 
         if self.state == PlayerState.JUMPING:
             self.state_timer += dt

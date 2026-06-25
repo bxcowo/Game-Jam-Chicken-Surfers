@@ -24,8 +24,14 @@ class CollectionSystem:
     def _apply_effect(self, collectible) -> None:
         ctype = collectible.collectible_type
         if ctype in COLLECTIBLE_VALUES:
-            self.context.score += COLLECTIBLE_VALUES[ctype]
+            points = COLLECTIBLE_VALUES[ctype]
+            if self.player.double_score_timer > 0:
+                points *= 2
+            self.context.score += points
             self.coin_sound.play()
         elif ctype == CollectibleType.ESCUDO:
             self.player.shield_timer = POWERUP_DURATIONS[CollectibleType.ESCUDO]
+            self.upgrade_sound.play()
+        elif ctype == CollectibleType.DOBLE_SCORE:
+            self.player.double_score_timer = POWERUP_DURATIONS[CollectibleType.DOBLE_SCORE]
             self.upgrade_sound.play()
