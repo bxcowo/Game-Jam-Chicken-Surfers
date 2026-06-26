@@ -22,7 +22,7 @@ class ObstacleSpawner:
         if self.paused:
             return
         nearest = self._nearest_obstacle_row()
-        if nearest is None or nearest >= self.next_gap:
+        if nearest is None or nearest >= SPAWN_ROW + self.next_gap:
             gap_min, gap_max = self._current_gap_range()
             self.next_gap = random.randint(gap_min, gap_max)
             self._spawn_row()
