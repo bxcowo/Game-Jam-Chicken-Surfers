@@ -50,8 +50,12 @@ class ObstacleSpawner:
 
     def _spawn_row(self) -> None:
         speed = self._current_speed()
-        safe_lane = random.randrange(GRID_SIZE_WIDTH)
         force = self._force_min_obstacles()
+        full_count = 0
+        if random.random() < 0.5:
+            safe_lane = random.randrange(GRID_SIZE_WIDTH)
+        else:
+            safe_lane = -1
         for lane in range(GRID_SIZE_WIDTH):
             if lane == safe_lane:
                 continue
@@ -62,6 +66,15 @@ class ObstacleSpawner:
                 band, color = HeightBand.GROUND, (0, 255, 0)
             elif roll < 0.8:
                 band, color = HeightBand.OVERHEAD, (180, 60, 40)
-            else:
+            elif full_count < GRID_SIZE_WIDTH - 1:
                 band, color = HeightBand.FULL, (0, 100, 255)
+                full_count += 1
+            else:
+                r = random.randint(0, 2)
+                if r == 0:
+                    band, color = HeightBand.GROUND, (0, 255, 0)
+                elif r == 1:
+                    band, color = HeightBand.OVERHEAD, (180, 60, 40)
+                else:
+                    continue
             self.group.add(Obstacle(lane, SPAWN_ROW, band, color, speed))
