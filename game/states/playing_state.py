@@ -1,6 +1,7 @@
 import pygame
 import random
 from game.entities.player import Player
+from game.entities.tile import Tile
 from game.settings import FINITE_MODE_DURATION_MS, GRID_SIZE_HEIGHT, GRID_SIZE_WIDTH, SWITCH_STATE
 from game.states.base_state import State
 from game.systems.collition_system import CollisionSystem
@@ -10,7 +11,6 @@ from game.systems.collectible_spawner import CollectibleSpawner
 from game.ui.progress_bar import ProgressBar
 from game.utils.dataclasses import GameContext, GameSession
 from game.ui.infinite_scroll_background import InfiniteScrollBackground
-from game.utils.isometric_handler import draw_tile_iso
 from game.utils.resources import get_sound_effects
 
 
@@ -32,6 +32,10 @@ class PlayingState(State):
             color_full=(255, 255, 255),
             color_empty=(60, 60, 60)
         )
+        self.tiles = pygame.sprite.Group()
+        for gx in range(GRID_SIZE_WIDTH):
+            for gy in range(GRID_SIZE_HEIGHT):
+                self.tiles.add(Tile(gx, gy, "street"))
 
     def enter(self) -> None:
         # Asignación de atributos
@@ -40,6 +44,10 @@ class PlayingState(State):
         self.bg_music.play(-1, 0, 5000)
         self.game_over = False
         self.time_elapsed_ms = 0
+
+        for i, tile in enumerate(self.tiles):
+            tile.gy = i % GRID_SIZE_HEIGHT
+
         player = Player(1)
         obstacles = pygame.sprite.Group()
         collectibles = pygame.sprite.Group()
@@ -90,12 +98,17 @@ class PlayingState(State):
 
             if self._flying:
                 self.sky_bg.update(dt)
+                for tile in self.tiles:
+                    tile.change_tile("sky")
+            else:
+                for tile in self.tiles:
+                    tile.change_tile("street")
 
             self.session.spawner.update(dt)
             self.session.collectible_spawner.update(dt)
             self.session.collisions.check()
             self.session.collections.check()
-            
+
             # Verificación de la culminación del tiempo finito
             if not self.context.is_infinity and self.time_elapsed_ms >= FINITE_MODE_DURATION_MS:
                 pygame.event.post(pygame.event.Event(SWITCH_STATE, {"target": "winner"}))
@@ -110,8 +123,9 @@ class PlayingState(State):
             self.sky_bg.draw(screen)
         else:
             screen.fill((30, 30, 30))
-            for gx, gy in self.draw_order:
-                draw_tile_iso(screen, gx, gy, (100, 150, 100))
+
+        for tile in sorted(self.tiles, key=lambda t: t.gx + t.gy):
+            screen.blit(tile.image, tile.rect)
 
         if self.session:
             self.session.obstacles.draw(screen)
