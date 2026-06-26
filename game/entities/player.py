@@ -1,6 +1,6 @@
 import pygame
 import math
-from pygame.locals import K_RIGHT, K_LEFT, K_UP, K_DOWN
+from pygame.locals import K_RIGHT, K_LEFT, K_UP, K_DOWN, K_w, K_a, K_s, K_d
 from game.utils.isometric_handler import screen_to_iso_x, screen_to_iso_y
 from game.systems.observer import Observer
 from game.settings import GRID_SIZE_WIDTH, JUMP_DURATION_MS, JUMP_VISUAL_LIFT, LANE_SWAP_SPEED, PLAYER_ANIMATION_SPEED, ROLL_DURATION_MS, PLAYER_ROW
@@ -38,16 +38,16 @@ class Player(pygame.sprite.Sprite, Observer):
     def on_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
-        if event.key == K_RIGHT and self.gx < GRID_SIZE_WIDTH - 1:
+        if event.key == K_RIGHT or event.key == K_d and self.gx < GRID_SIZE_WIDTH - 1:
             self.gx += 1
             self.roll_sound.play()
-        elif event.key == K_LEFT and self.gx > 0:
+        elif event.key == K_LEFT or event.key == K_a and self.gx > 0:
             self.gx -= 1
             self.roll_sound.play()
-        elif event.key == K_UP and self.state == PlayerState.RUNNING and not self._flying:
+        elif event.key == K_UP or event.key == K_w and not self._flying:
             self._set_state(PlayerState.JUMPING)
             self.fly_sound.play()
-        elif event.key == K_DOWN and self.state == PlayerState.RUNNING and not self._flying:
+        elif event.key == K_DOWN or event.key == K_s and not self._flying:
             self._set_state(PlayerState.ROLLING)
             self.roll_sound.play()
         self._sync_rect()
@@ -110,6 +110,7 @@ class Player(pygame.sprite.Sprite, Observer):
         self.state_timer = 0
         self.image_index = 0
         self.image_counter = 0
+        self.z = 0
         self.images = get_player_frames(new_state)
         self.image = self.images[self.image_index]
 
