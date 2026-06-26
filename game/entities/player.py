@@ -38,16 +38,16 @@ class Player(pygame.sprite.Sprite, Observer):
     def on_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
-        if event.key == K_RIGHT or event.key == K_d and self.gx < GRID_SIZE_WIDTH - 1:
+        if (event.key == K_RIGHT or event.key == K_d) and self.gx < GRID_SIZE_WIDTH - 1:
             self.gx += 1
             self.roll_sound.play()
-        elif event.key == K_LEFT or event.key == K_a and self.gx > 0:
+        elif (event.key == K_LEFT or event.key == K_a) and self.gx > 0:
             self.gx -= 1
             self.roll_sound.play()
-        elif event.key == K_UP or event.key == K_w and not self._flying:
+        elif (event.key == K_UP or event.key == K_w) and not self._flying:
             self._set_state(PlayerState.JUMPING)
             self.fly_sound.play()
-        elif event.key == K_DOWN or event.key == K_s and not self._flying:
+        elif (event.key == K_DOWN or event.key == K_s) and not self._flying:
             self._set_state(PlayerState.ROLLING)
             self.roll_sound.play()
         self._sync_rect()
