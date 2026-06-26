@@ -25,7 +25,7 @@ class CollectibleSpawner:
 
         nearest = self._nearest_collectible_row()
         gap_range = (1, 2) if self.boosted else (1, 3)
-        if nearest is None or nearest >= self.next_gap:
+        if nearest is None or nearest >= SPAWN_ROW + self.next_gap:
             self.next_gap = random.randint(*gap_range)
             self._spawn_collectible()
 
@@ -58,12 +58,18 @@ class CollectibleSpawner:
 
     def _random_type(self) -> tuple[CollectibleType, tuple]:
         roll = random.random()
-        if roll < 0.6:
+        if roll < 0.50:
             return CollectibleType.KETCHUP, (255, 105, 180)
-        elif roll < 0.85:
+        elif roll < 0.70:
             return CollectibleType.MAYONESA, (255, 255, 255)
-        else:
+        elif roll < 0.85:
             return CollectibleType.AJI, (255, 255, 0)
+        elif roll < 0.92:
+            return CollectibleType.ESCUDO, (0, 200, 255)
+        elif roll < 0.97:
+            return CollectibleType.DOBLE_SCORE, (255, 140, 0)
+        else:
+            return CollectibleType.VOLAR, (180, 0, 255)
 
     def _nearest_obstacle_speed(self) -> float:
         if not self.obstacle_group:
