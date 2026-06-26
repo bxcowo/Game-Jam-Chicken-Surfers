@@ -1,7 +1,7 @@
 import pygame
 
 from game.settings import SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH
-from game.utils.enums import ButtonContent, PlayerState
+from game.utils.enums import ButtonContent, CollectibleType, HeightBand, PlayerState
 from game.systems.spritesheet_handler import SpriteSheet
 
 _player_frames = {}
@@ -10,6 +10,8 @@ _backgrounds = {}
 _game_images = {}
 _sound_effects = {}
 _tile_sprites = {}
+_collectible_sprites = {}
+_obstacles_sprites = {}
 
 def load():
     global _player_frames
@@ -18,6 +20,8 @@ def load():
     global _game_images
     global _sound_effects
     global _tile_sprites
+    global _collectible_sprites
+    global _obstacles_sprites
 
     _player_frames = {
         PlayerState.RUNNING: SpriteSheet("assets/chicken_sprites/ChickenWalking.png", num_frames=4, width=20, height=21).get_frames(),
@@ -38,7 +42,8 @@ def load():
         "main_menu": pygame.transform.scale(pygame.image.load("assets/background_images/menu_city.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "lose_bg": pygame.transform.scale(pygame.image.load("assets/background_images/brick_wall_purple.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "sky_bg": pygame.transform.scale(pygame.image.load("assets/background_images/sky_bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        "win_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
+        "win_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
+        "city_bg": pygame.transform.scale(pygame.image.load("assets/background_images/city_bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
     }
 
     _game_images = {
@@ -52,6 +57,21 @@ def load():
     _tile_sprites = {
         "street": _make_tile_surface("assets/tiles/street_tile.png"),
         "sky": _make_tile_surface("assets/tiles/cloud_tile.png")
+    }
+
+    _collectible_sprites = {
+        CollectibleType.MAYONESA: pygame.image.load("assets/collectible_sprites/mayonesa_pixel_art.png"),
+        CollectibleType.KETCHUP: pygame.image.load("assets/collectible_sprites/ketchup_pixel_art.png"),
+        CollectibleType.AJI: pygame.image.load("assets/collectible_sprites/mayonesa_pixel_art.png"),
+        CollectibleType.DOBLE_SCORE: pygame.transform.scale(pygame.image.load("assets/collectible_sprites/papas_fritas.png"), (90, 90)),
+        CollectibleType.ESCUDO: pygame.transform.scale(pygame.image.load("assets/collectible_sprites/salad.png"), (70, 55)),
+        CollectibleType.VOLAR: pygame.transform.scale(pygame.image.load("assets/collectible_sprites/inka_cola.png"), (90, 90))
+    }
+
+    _obstacles_sprites = {
+        HeightBand.GROUND: pygame.image.load("assets/obstacles_sprites/crack_road_pixel_art.png"),
+        HeightBand.OVERHEAD: pygame.transform.smoothscale(pygame.image.load("assets/obstacles_sprites/traffic_cone_pixel_art.png"), (100, 90)),
+        HeightBand.FULL: pygame.transform.scale(pygame.image.load("assets/obstacles_sprites/camion_pixel_art.png"), (125, 100))
     }
 
     _sound_effects = {
@@ -105,3 +125,9 @@ def _make_tile_surface(url: str) -> pygame.Surface:
 
 def get_sound_effects(key: str) -> pygame.mixer.Sound:
     return _sound_effects[key]
+
+def get_collectible_image(collectible: CollectibleType) -> pygame.Surface:
+    return _collectible_sprites[collectible]
+
+def get_obstacle_sprite(height: HeightBand) -> pygame.Surface:
+    return _obstacles_sprites[height]
