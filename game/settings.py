@@ -37,6 +37,9 @@ DIFFICULTY_RAMP_MS = 20_000
 # Threshold para detección de colisión entre jugador y obstaculos.
 HIT_TOLERANCE = 0.4
 
+# Threshold para detección de recolección entre jugador y coleccionables.
+COLLECTION_TOLERANCE = 0.6
+
 # Código para eventos personalizados
 SWITCH_STATE = pygame.USEREVENT + 1
 

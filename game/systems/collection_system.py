@@ -1,4 +1,4 @@
-from game.settings import PLAYER_ROW, COLLECTIBLE_VALUES, POWERUP_DURATIONS
+from game.settings import PLAYER_ROW, COLLECTIBLE_VALUES, COLLECTION_TOLERANCE, POWERUP_DURATIONS
 from game.utils.dataclasses import GameContext
 from game.utils.enums import CollectibleType
 from game.utils.resources import get_sound_effects
@@ -16,7 +16,7 @@ class CollectionSystem:
         for collectible in list(self.collectible_group):
             if collectible.gx != self.player.gx:
                 continue
-            if abs(collectible.gy - PLAYER_ROW) > 0.6:
+            if abs(collectible.gy - PLAYER_ROW) > COLLECTION_TOLERANCE:
                 continue
             self._apply_effect(collectible)
             collectible.kill()
