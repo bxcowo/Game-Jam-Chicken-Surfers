@@ -63,18 +63,18 @@ class ObstacleSpawner:
                 continue
             roll = random.random()
             if roll < 0.4:
-                band, color = HeightBand.GROUND, (0, 255, 0)
+                band = HeightBand.GROUND
             elif roll < 0.8:
-                band, color = HeightBand.OVERHEAD, (180, 60, 40)
+                band = HeightBand.OVERHEAD
             elif full_count < GRID_SIZE_WIDTH - 1:
-                band, color = HeightBand.FULL, (0, 100, 255)
+                band = HeightBand.FULL
                 full_count += 1
             else:
                 r = random.randint(0, 2)
                 if r == 0:
-                    band, color = HeightBand.GROUND, (0, 255, 0)
+                    band = HeightBand.GROUND
                 elif r == 1:
-                    band, color = HeightBand.OVERHEAD, (180, 60, 40)
+                    band = HeightBand.OVERHEAD
                 else:
                     continue
-            self.group.add(Obstacle(lane, SPAWN_ROW, band, color, speed))
+            self.group.add(Obstacle(lane, SPAWN_ROW, band, speed))

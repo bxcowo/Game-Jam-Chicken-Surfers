@@ -2,17 +2,17 @@ import pygame
 from game.settings import GRID_SIZE_HEIGHT
 from game.utils.enums import CollectibleType
 from game.utils.isometric_handler import screen_to_iso_complete
+from game.utils.resources import get_collectible_image
 
 
 class Collectible(pygame.sprite.Sprite):
-    def __init__(self, gx: int, gy: int, collectible_type: CollectibleType, col, speed: float) -> None:
+    def __init__(self, gx: int, gy: int, collectible_type: CollectibleType, speed: float) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.gx, self.gy = gx, gy
         self.speed = speed
         self.collectible_type = collectible_type
 
-        self.image = pygame.Surface((20, 20))
-        self.image.fill(col)
+        self.image = get_collectible_image(collectible_type)
         self.rect = self.image.get_rect()
 
         self._sync_rect()

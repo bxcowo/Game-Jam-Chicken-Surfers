@@ -56,20 +56,20 @@ class CollectibleSpawner:
                 occupied.add(collectible.gx)
         return [lane for lane in range(GRID_SIZE_WIDTH) if lane not in occupied]
 
-    def _random_type(self) -> tuple[CollectibleType, tuple]:
+    def _random_type(self) -> CollectibleType:
         roll = random.random()
         if roll < 0.50:
-            return CollectibleType.KETCHUP, (255, 105, 180)
+            return CollectibleType.KETCHUP
         elif roll < 0.70:
-            return CollectibleType.MAYONESA, (255, 255, 255)
+            return CollectibleType.MAYONESA
         elif roll < 0.85:
-            return CollectibleType.AJI, (255, 255, 0)
+            return CollectibleType.AJI
         elif roll < 0.92:
-            return CollectibleType.ESCUDO, (0, 200, 255)
+            return CollectibleType.ESCUDO
         elif roll < 0.97:
-            return CollectibleType.DOBLE_SCORE, (255, 140, 0)
+            return CollectibleType.DOBLE_SCORE
         else:
-            return CollectibleType.VOLAR, (180, 0, 255)
+            return CollectibleType.VOLAR
 
     def _nearest_obstacle_speed(self) -> float:
         if not self.obstacle_group:
@@ -81,6 +81,6 @@ class CollectibleSpawner:
         if not free_lanes:
             return
         lane = random.choice(free_lanes)
-        collectible_type, color = self._random_type()
+        collectible_type = self._random_type()
         speed = self._nearest_obstacle_speed()
-        self.group.add(Collectible(lane, SPAWN_ROW, collectible_type, color, speed))
+        self.group.add(Collectible(lane, SPAWN_ROW, collectible_type, speed))

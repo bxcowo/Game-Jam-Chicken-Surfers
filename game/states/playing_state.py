@@ -25,6 +25,7 @@ class PlayingState(State):
             key=lambda t: t[0] + t[1]
         )
         self.score_font = pygame.font.SysFont(None, 36)
+        self.city_bg = InfiniteScrollBackground("city_bg")
         self.sky_bg = InfiniteScrollBackground("sky_bg")
         self._flying: bool = False
         self.progress_bar = ProgressBar(
@@ -101,6 +102,7 @@ class PlayingState(State):
                 for tile in self.tiles:
                     tile.change_tile("sky")
             else:
+                self.city_bg.update(dt)
                 for tile in self.tiles:
                     tile.change_tile("street")
 
@@ -122,7 +124,7 @@ class PlayingState(State):
         if self._flying:
             self.sky_bg.draw(screen)
         else:
-            screen.fill((30, 30, 30))
+            self.city_bg.draw(screen)
 
         for tile in sorted(self.tiles, key=lambda t: t.gx + t.gy):
             screen.blit(tile.image, tile.rect)
