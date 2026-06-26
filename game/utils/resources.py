@@ -1,6 +1,6 @@
 import pygame
 
-from game.settings import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.settings import SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH
 from game.utils.enums import ButtonContent, PlayerState
 from game.systems.spritesheet_handler import SpriteSheet
 
@@ -9,6 +9,7 @@ _button_sprites = {}
 _backgrounds = {}
 _game_images = {}
 _sound_effects = {}
+_tile_sprites = {}
 
 def load():
     global _player_frames
@@ -16,6 +17,7 @@ def load():
     global _backgrounds
     global _game_images
     global _sound_effects
+    global _tile_sprites
 
     _player_frames = {
         PlayerState.RUNNING: SpriteSheet("assets/chicken_sprites/ChickenWalking.png", num_frames=4, width=20, height=21).get_frames(),
@@ -35,7 +37,7 @@ def load():
     _backgrounds = {
         "main_menu": pygame.transform.scale(pygame.image.load("assets/background_images/menu_city.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "lose_bg": pygame.transform.scale(pygame.image.load("assets/background_images/brick_wall_purple.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        "sky_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
+        "sky_bg": pygame.transform.scale(pygame.image.load("assets/background_images/sky_bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT)),
         "win_bg": pygame.transform.scale(pygame.image.load("assets/background_images/winner_clouds.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
     }
 
@@ -45,6 +47,11 @@ def load():
         "lose_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/lose_title.png").convert_alpha(), (650, 170)),
         "win_image": pygame.transform.scale(pygame.image.load("assets/game_images/victory_image.png").convert(), (375, 225)),
         "win_title": pygame.transform.smoothscale(pygame.image.load("assets/game_images/victory_title.png").convert_alpha(), (650, 100)),
+    }
+
+    _tile_sprites = {
+        "street": _make_tile_surface("assets/tiles/street_tile.png"),
+        "sky": _make_tile_surface("assets/tiles/cloud_tile.png")
     }
 
     _sound_effects = {
@@ -77,6 +84,24 @@ def get_backgrounds(key: str) -> pygame.Surface:
 
 def get_game_image(key: str) -> pygame.Surface:
     return _game_images[key]
+
+def get_image_tile(key: str) -> pygame.Surface:
+    return _tile_sprites[key]
+
+def _make_tile_surface(url: str) -> pygame.Surface:
+    surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT), pygame.SRCALPHA)
+
+    top    = (TILE_WIDTH/2, 0)
+    right  = (TILE_WIDTH, TILE_HEIGHT/2)
+    bottom = (TILE_WIDTH/2, TILE_HEIGHT)
+    left   = (0, TILE_HEIGHT/2)
+    pygame.draw.polygon(surface, (255, 255, 255), [top, right, bottom, left])
+
+    tile_img = pygame.image.load(url).convert_alpha()
+    tile_img = pygame.transform.scale(tile_img, (TILE_WIDTH, TILE_HEIGHT))
+
+    surface.blit(tile_img, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    return surface
 
 def get_sound_effects(key: str) -> pygame.mixer.Sound:
     return _sound_effects[key]
