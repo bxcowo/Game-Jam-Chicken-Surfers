@@ -23,3 +23,24 @@ uv sync
 chmod +x run.sh
 ./run.sh
 ```
+## Menú de Inicio
+
+<img src="images/menu-inicio.png" alt="Menú de Inicio" width="600">
+
+## Modo Normal
+
+<img src="images/modo-normal.png" alt="Modo Normal - Fondo Calle" width="600">
+
+<img src="images/pantalla-cielo.png" alt="Modo Normal - Fondo Cielo" width="600">
+
+## Modo Infinito
+
+<img src="images/modo-infinito.png" alt="Modo Infinito" width="600">
+
+## Pantalla de Ganaste
+
+<img src="images/pantalla-ganaste.png" alt="Pantalla de Ganaste" width="600">
+
+## Pantalla de Perdiste
+
+<img src="images/pantalla-derrota.png" alt="Pantalla de Perdiste" width="600">
